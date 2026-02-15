@@ -2,27 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Penguin Quest - Gothic Romance</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         html, body {
             width: 100%;
             height: 100%;
+            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             font-family: 'Courier New', monospace;
             background: linear-gradient(135deg, #1a0033 0%, #330066 50%, #2d004d 100%);
+            position: fixed;
         }
 
         canvas {
             display: block;
             width: 100%;
             height: 100%;
+            touch-action: none;
         }
 
         .ui-overlay {
@@ -37,15 +44,15 @@
 
         .hud {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 10px;
+            left: 10px;
             background: rgba(20, 0, 40, 0.95);
             border: 3px solid #FF1493;
-            padding: 25px;
+            padding: 15px;
             border-radius: 2px;
             font-family: 'Courier New', monospace;
             color: #FFF;
-            font-size: 13px;
+            font-size: 11px;
             backdrop-filter: blur(15px);
             pointer-events: auto;
             box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), inset 0 0 20px rgba(255, 20, 147, 0.1);
@@ -56,26 +63,26 @@
         .hud-title {
             color: #FF1493;
             font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 12px;
+            font-size: 13px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(255, 20, 147, 0.8);
         }
 
         .hud-item {
-            margin: 10px 0;
-            line-height: 1.8;
+            margin: 6px 0;
+            line-height: 1.5;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             color: #E0B0FF;
         }
 
         .hud-label {
             color: #FF1493;
             font-weight: bold;
-            min-width: 100px;
+            min-width: 60px;
             text-shadow: 0 0 8px rgba(255, 20, 147, 0.6);
         }
 
@@ -87,13 +94,13 @@
 
         .score-counter {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 10px;
+            right: 10px;
             background: rgba(20, 0, 40, 0.95);
             border: 3px solid #FFD700;
-            padding: 20px 35px;
+            padding: 12px 20px;
             border-radius: 2px;
-            font-size: 28px;
+            font-size: 18px;
             font-weight: bold;
             color: #FFD700;
             backdrop-filter: blur(15px);
@@ -102,18 +109,18 @@
             z-index: 100;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .affection-meter {
             position: fixed;
-            bottom: 100px;
-            right: 20px;
+            bottom: 10px;
+            right: 10px;
             background: rgba(20, 0, 40, 0.95);
             border: 3px solid #FF1493;
-            padding: 15px;
+            padding: 12px;
             border-radius: 2px;
-            width: 250px;
+            width: 180px;
             pointer-events: auto;
             box-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
             z-index: 100;
@@ -121,16 +128,16 @@
 
         .affection-label {
             color: #FF1493;
-            font-size: 11px;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
             text-shadow: 0 0 8px rgba(255, 20, 147, 0.6);
         }
 
         .affection-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: rgba(255, 20, 147, 0.2);
             border: 1px solid #FF1493;
             position: relative;
@@ -147,43 +154,85 @@
 
         .affection-text {
             color: #E0B0FF;
-            font-size: 10px;
-            margin-top: 6px;
+            font-size: 8px;
+            margin-top: 4px;
             text-align: center;
-            min-height: 15px;
+            min-height: 12px;
         }
 
-        .controls-hint {
+        .mobile-controls {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(20, 0, 40, 0.95);
-            border: 3px solid #E0B0FF;
-            padding: 18px 24px;
-            border-radius: 2px;
-            font-family: 'Courier New', monospace;
-            color: #FFF;
-            font-size: 11px;
-            backdrop-filter: blur(15px);
+            bottom: 10px;
+            left: 10px;
+            display: flex;
+            gap: 8px;
             pointer-events: auto;
-            box-shadow: 0 0 30px rgba(224, 176, 255, 0.4);
+            z-index: 100;
+            flex-wrap: wrap;
+            width: 200px;
+        }
+
+        .mobile-btn {
+            background: rgba(20, 0, 40, 0.95);
+            border: 2px solid #FF1493;
+            padding: 10px 12px;
+            border-radius: 2px;
+            color: #E0B0FF;
+            font-weight: bold;
+            font-size: 10px;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.4);
+            transition: all 0.2s;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .control-item {
-            margin: 6px 0;
-            color: #E0B0FF;
+        .mobile-btn:active {
+            background: rgba(255, 20, 147, 0.3);
+            box-shadow: 0 0 25px rgba(255, 20, 147, 0.8);
+            transform: scale(0.95);
         }
 
-        .control-key {
-            color: #FFD700;
-            font-weight: bold;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        .joystick-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background: rgba(20, 0, 40, 0.8);
+            border: 2px solid #FF1493;
+            border-radius: 50%;
+            pointer-events: auto;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
+        }
+
+        .joystick-stick {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FF1493, #FF69B4);
+            border-radius: 50%;
+            border: 2px solid #FFD700;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .joystick-stick:active {
+            cursor: grabbing;
         }
 
         .affirmation-popup {
             position: fixed;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: bold;
             color: #FF1493;
             text-shadow: 0 0 15px rgba(255, 20, 147, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -206,32 +255,6 @@
             }
         }
 
-        .jojo-text {
-            position: fixed;
-            font-size: 48px;
-            font-weight: 900;
-            color: #FFD700;
-            text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 0 20px rgba(255, 215, 0, 0.8);
-            pointer-events: none;
-            z-index: 60;
-            animation: jojoShake 0.15s infinite;
-            font-family: 'Impact', sans-serif;
-            letter-spacing: 3px;
-        }
-
-        @keyframes jojoShake {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(-5px, -5px) scale(1.05); }
-            50% { transform: translate(5px, 5px) scale(1); }
-            75% { transform: translate(-5px, 5px) scale(1.05); }
-        }
-
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 5;
-        }
-
         .end-screen {
             position: fixed;
             top: 0;
@@ -246,6 +269,7 @@
             z-index: 1000;
             pointer-events: auto;
             backdrop-filter: blur(5px);
+            padding: 20px;
         }
 
         .end-screen.active {
@@ -256,10 +280,12 @@
             text-align: center;
             color: #FFF;
             animation: scaleIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            padding: 40px;
+            padding: 30px 20px;
             border: 4px solid #FF1493;
             background: rgba(20, 0, 40, 0.9);
             box-shadow: 0 0 50px rgba(255, 20, 147, 0.8);
+            max-width: 90%;
+            border-radius: 2px;
         }
 
         @keyframes scaleIn {
@@ -274,27 +300,27 @@
         }
 
         .end-screen h1 {
-            font-size: 56px;
+            font-size: 36px;
             color: #FF1493;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .end-screen p {
-            font-size: 22px;
+            font-size: 16px;
             color: #E0B0FF;
-            margin: 15px 0;
+            margin: 10px 0;
             text-shadow: 0 0 15px rgba(224, 176, 255, 0.6);
             font-family: 'Courier New', monospace;
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         .end-screen button {
-            margin-top: 35px;
-            padding: 18px 50px;
-            font-size: 18px;
+            margin-top: 25px;
+            padding: 14px 40px;
+            font-size: 14px;
             background: linear-gradient(135deg, #FF1493, #FF69B4);
             color: #FFF;
             border: 3px solid #FF1493;
@@ -305,19 +331,33 @@
             box-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
             font-family: 'Courier New', monospace;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
-        .end-screen button:hover {
-            transform: scale(1.1);
+        .end-screen button:active {
+            transform: scale(0.95);
             box-shadow: 0 0 50px rgba(255, 20, 147, 1);
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         }
 
-        .special-effect {
-            position: fixed;
-            pointer-events: none;
-            z-index: 55;
+        @media (max-width: 600px) {
+            .hud {
+                padding: 12px;
+                font-size: 10px;
+            }
+
+            .hud-title {
+                font-size: 11px;
+            }
+
+            .score-counter {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+
+            .affection-meter {
+                width: 150px;
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -326,65 +366,62 @@
     
     <div class="ui-overlay">
         <div class="hud">
-            <div class="hud-title">⚰️ PENGUIN QUEST ⚰️</div>
+            <div class="hud-title">⚰️ QUEST ⚰️</div>
             <div class="hud-item">
-                <span class="hud-label">❤️ VITALITY:</span>
+                <span class="hud-label">❤️:</span>
                 <span class="hud-value" id="lives">3</span>
             </div>
             <div class="hud-item">
-                <span class="hud-label">📍 LEVEL:</span>
+                <span class="hud-label">LVL:</span>
                 <span class="hud-value" id="level">1</span>
             </div>
             <div class="hud-item">
-                <span class="hud-label">⚔️ POWER:</span>
+                <span class="hud-label">PWR:</span>
                 <span class="hud-value" id="power">0%</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-label">FPS:</span>
-                <span class="hud-value" id="fps">60</span>
             </div>
         </div>
 
         <div class="score-counter">
-            💀 <span id="score">0</span> 💀
+            💀 <span id="score">0</span>
         </div>
 
         <div class="affection-meter">
-            <div class="affection-label">💋 Affection Level</div>
+            <div class="affection-label">💋 Affection</div>
             <div class="affection-bar">
                 <div class="affection-fill" id="affectionFill"></div>
             </div>
-            <div class="affection-text" id="affectionText">Just beginning, sunshine... 😈</div>
+            <div class="affection-text" id="affectionText">Waiting, sunshine...</div>
         </div>
 
-        <div class="controls-hint">
-            <div class="control-item"><span class="control-key">← →</span> or <span class="control-key">A/D</span> - Move, Darling</div>
-            <div class="control-item"><span class="control-key">SPACE</span> - Jump / Slide</div>
-            <div class="control-item"><span class="control-key">E</span> - Special Attack (MUDA!)</div>
-            <div class="control-item"><span class="control-key">J</span> - ORA ORA!</div>
-            <div class="control-item"><span class="control-key">S</span> - Summon Stand</div>
-            <div class="control-item"><span class="control-key">R</span> - Reset</div>
-            <div class="control-item"><span class="control-key">Click</span> - Spawn Love</div>
+        <div class="joystick-container" id="joystickContainer">
+            <div class="joystick-stick" id="joystickStick"></div>
+        </div>
+
+        <div class="mobile-controls">
+            <button class="mobile-btn" id="jumpBtn" ontouchstart="game.input.jump = true; game.triggerJump();" ontouchend="game.input.jump = false;">JUMP</button>
+            <button class="mobile-btn" id="specialBtn" ontouchstart="game.triggerSpecial();" ontouchend="game.input.special = false;">MUDA</button>
+            <button class="mobile-btn" id="oraBtn" ontouchstart="game.triggerORA();">ORA!</button>
+            <button class="mobile-btn" id="standBtn" ontouchstart="game.triggerStand();">STAND</button>
         </div>
     </div>
 
     <div class="end-screen" id="endScreen">
         <div class="end-screen-content">
-            <h1>💖 VICTORY, SUNSHINE! 💖</h1>
+            <h1>💖 VICTORY! 💖</h1>
             <p id="endMessage">You've conquered the Midnight Castle...</p>
             <p id="finalScore">Score: 0 💀</p>
             <p id="endAffirmation">I love you so much, sunshine! 😛💕</p>
-            <button onclick="location.reload()">Play Again, Darling</button>
+            <button onclick="location.reload()">PLAY AGAIN</button>
         </div>
     </div>
 
     <script>
-        // ============ AUDIO SYNTHESIS ============
+        // ============ ADVANCED AUDIO ENGINE ============
         class AudioEngine {
             constructor() {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 this.masterGain = this.audioContext.createGain();
-                this.masterGain.gain.value = 0.15;
+                this.masterGain.gain.value = 0.12;
                 this.masterGain.connect(this.audioContext.destination);
                 this.isPlaying = false;
             }
@@ -397,43 +434,92 @@
                 const tempo = 120;
                 const beatDuration = 60 / tempo;
 
-                // Bass line (dark rock)
-                const bassPattern = [55, 55, 73.42, 73.42, 55, 55, 82.41, 82.41];
+                // Drum pattern (kick + snare)
+                const kickPattern = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5];
+                kickPattern.forEach(offset => {
+                    this.playKick(now + offset * beatDuration * 0.5);
+                });
+
+                // Bass line (dark & heavy)
+                const bassPattern = [
+                    { freq: 55, time: 0 },
+                    { freq: 55, time: 0.5 },
+                    { freq: 73.42, time: 1 },
+                    { freq: 73.42, time: 1.5 },
+                    { freq: 82.41, time: 2 },
+                    { freq: 82.41, time: 2.5 },
+                    { freq: 73.42, time: 3 },
+                    { freq: 73.42, time: 3.5 }
+                ];
+
                 const bassGain = this.audioContext.createGain();
-                bassGain.gain.value = 0.3;
+                bassGain.gain.value = 0.35;
                 bassGain.connect(this.masterGain);
 
-                bassPattern.forEach((freq, idx) => {
-                    const time = now + idx * beatDuration * 0.5;
-                    this.playNote(freq, time, beatDuration * 0.4, 'sine', bassGain, 0.4);
+                bassPattern.forEach(note => {
+                    const time = now + note.time * beatDuration * 0.5;
+                    this.playNote(note.freq, time, beatDuration * 0.45, 'sine', bassGain, 0.5);
                 });
 
-                // Lead melody (phrasing rhythm)
-                const leadPattern = [164.81, 164.81, 196, 196, 164.81, 146.83, 130.81, 146.83];
+                // Lead melody (powerful)
+                const leadPattern = [
+                    { freq: 164.81, time: 4 },
+                    { freq: 164.81, time: 4.5 },
+                    { freq: 196, time: 5 },
+                    { freq: 220, time: 5.5 },
+                    { freq: 246.94, time: 6 },
+                    { freq: 220, time: 6.5 },
+                    { freq: 196, time: 7 },
+                    { freq: 164.81, time: 7.5 }
+                ];
+
                 const leadGain = this.audioContext.createGain();
-                leadGain.gain.value = 0.25;
+                leadGain.gain.value = 0.28;
                 leadGain.connect(this.masterGain);
 
-                leadPattern.forEach((freq, idx) => {
-                    const time = now + idx * beatDuration * 0.5 + beatDuration * 4;
-                    this.playNote(freq, time, beatDuration * 0.35, 'square', leadGain, 0.3);
+                leadPattern.forEach(note => {
+                    const time = now + note.time * beatDuration * 0.5;
+                    this.playNote(note.freq, time, beatDuration * 0.4, 'square', leadGain, 0.35);
                 });
 
-                // Loop
+                // Loop the music
                 setTimeout(() => this.playRockMusic(), beatDuration * 16 * 1000);
+            }
+
+            playKick(startTime) {
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
+
+                osc.frequency.setValueAtTime(150, startTime);
+                osc.frequency.exponentialRampToValueAtTime(20, startTime + 0.1);
+
+                gain.gain.setValueAtTime(1, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, startTime + 0.1);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(startTime);
+                osc.stop(startTime + 0.1);
             }
 
             playNote(frequency, startTime, duration, waveform = 'sine', outputNode = null, volume = 1) {
                 const osc = this.audioContext.createOscillator();
                 const gain = this.audioContext.createGain();
+                const filter = this.audioContext.createBiquadFilter();
                 
                 osc.type = waveform;
                 osc.frequency.value = frequency;
+                filter.type = 'lowpass';
+                filter.frequency.value = 3000;
                 
                 gain.gain.setValueAtTime(volume, startTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
                 
-                osc.connect(gain);
+                osc.connect(filter);
+                filter.connect(gain);
                 gain.connect(outputNode || this.masterGain);
                 
                 osc.start(startTime);
@@ -442,23 +528,42 @@
 
             playCollectSound() {
                 const now = this.audioContext.currentTime;
-                this.playNote(523.25, now, 0.1);
-                this.playNote(659.25, now + 0.1, 0.1);
-                this.playNote(783.99, now + 0.2, 0.15);
+                const notes = [523.25, 659.25, 783.99, 1046.5];
+                notes.forEach((freq, i) => {
+                    this.playNote(freq, now + i * 0.08, 0.12, 'sine', null, 0.3);
+                });
             }
 
             playJojoSound() {
                 const now = this.audioContext.currentTime;
-                for (let i = 0; i < 4; i++) {
-                    this.playNote(880, now + i * 0.08, 0.08, 'square');
+                for (let i = 0; i < 5; i++) {
+                    this.playNote(880, now + i * 0.06, 0.05, 'square', null, 0.4);
                 }
             }
 
             playSpecialSound() {
                 const now = this.audioContext.currentTime;
-                this.playNote(440, now, 0.05, 'sine');
-                this.playNote(660, now + 0.05, 0.05, 'sine');
-                this.playNote(880, now + 0.1, 0.1, 'sine');
+                this.playNote(440, now, 0.05);
+                this.playNote(660, now + 0.05, 0.05);
+                this.playNote(880, now + 0.1, 0.15);
+            }
+
+            playImpactSound() {
+                const now = this.audioContext.currentTime;
+                const osc = this.audioContext.createOscillator();
+                const gain = this.audioContext.createGain();
+
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+
+                gain.gain.setValueAtTime(0.6, now);
+                gain.gain.exponentialRampToValueAtTime(0, now + 0.15);
+
+                osc.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(now);
+                osc.stop(now + 0.15);
             }
         }
 
@@ -497,7 +602,7 @@
 
         // ============ PARTICLE SYSTEM ============
         class Particle {
-            constructor(x, y, vx, vy, color, lifetime = 1) {
+            constructor(x, y, vx, vy, color, lifetime = 1, type = 'normal') {
                 this.x = x;
                 this.y = y;
                 this.vx = vx;
@@ -507,7 +612,9 @@
                 this.age = 0;
                 this.size = Math.random() * 5 + 2;
                 this.rotation = Math.random() * Math.PI * 2;
-                this.rotationSpeed = (Math.random() - 0.5) * 10;
+                this.rotationSpeed = (Math.random() - 0.5) * 12;
+                this.type = type;
+                this.scaleVariation = Math.random() * 0.5 + 0.5;
             }
 
             update(dt) {
@@ -520,16 +627,56 @@
 
             draw(ctx) {
                 const alpha = Math.max(0, 1 - (this.age / this.lifetime));
+                const scale = 1 - (this.age / this.lifetime);
+                
                 ctx.globalAlpha = alpha;
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation);
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, this.size, 0, Math.PI * 2);
-                ctx.fill();
+
+                if (this.type === 'heart') {
+                    this.drawHeartParticle(ctx, scale);
+                } else if (this.type === 'star') {
+                    this.drawStarParticle(ctx, scale);
+                } else {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
                 ctx.restore();
                 ctx.globalAlpha = 1;
+            }
+
+            drawHeartParticle(ctx, scale) {
+                ctx.fillStyle = this.color;
+                const s = 3 * scale;
+                ctx.beginPath();
+                ctx.moveTo(0, -2 * s);
+                ctx.bezierCurveTo(-3 * s, -5 * s, -4.5 * s, -3 * s, -4.5 * s, 0);
+                ctx.bezierCurveTo(-4.5 * s, 2.5 * s, 0, 5.5 * s, 0, 5.5 * s);
+                ctx.bezierCurveTo(0, 5.5 * s, 4.5 * s, 2.5 * s, 4.5 * s, 0);
+                ctx.bezierCurveTo(4.5 * s, -3 * s, 3 * s, -5 * s, 0, -2 * s);
+                ctx.fill();
+            }
+
+            drawStarParticle(ctx, scale) {
+                ctx.fillStyle = this.color;
+                const size = 3 * scale;
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                    const x = Math.cos(angle) * size;
+                    const y = Math.sin(angle) * size;
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.closePath();
+                ctx.fill();
             }
 
             isAlive() {
@@ -555,9 +702,10 @@
                 this.specialEnergy = 0;
                 this.maxSpecialEnergy = 100;
                 this.heartBeat = 0;
+                this.glitchEffect = 0;
             }
 
-            update(dt, input, platforms) {
+            update(dt, input) {
                 const groundLevel = 400;
                 
                 if (input.left) {
@@ -614,11 +762,19 @@
                 }
 
                 this.heartBeat += dt * 2;
+                this.glitchEffect = Math.max(0, this.glitchEffect - dt);
             }
 
             draw(ctx) {
+                let glitchX = 0;
+                let glitchY = 0;
+                if (this.glitchEffect > 0) {
+                    glitchX = (Math.random() - 0.5) * 4;
+                    glitchY = (Math.random() - 0.5) * 4;
+                }
+
                 ctx.save();
-                ctx.translate(this.x + this.width / 2, this.y);
+                ctx.translate(this.x + this.width / 2 + glitchX, this.y + glitchY);
 
                 if (this.facing === -1) {
                     ctx.scale(-1, 1);
@@ -632,14 +788,14 @@
                 ctx.ellipse(0, 12, 13, 19, 0, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Gothic chest plate effect
+                // Gothic chest plate
                 ctx.strokeStyle = '#FF1493';
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.ellipse(0, 14, 6, 10, 0, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // Belly (dark with heart symbol)
+                // Belly
                 ctx.fillStyle = '#1a1a2e';
                 ctx.beginPath();
                 ctx.ellipse(0, 13, 8, 13, 0, 0, Math.PI * 2);
@@ -654,7 +810,7 @@
                 ctx.fillText('💖', 0, 13);
                 ctx.globalAlpha = 1;
 
-                // Head (black)
+                // Head
                 ctx.fillStyle = '#0a0a0a';
                 ctx.beginPath();
                 ctx.arc(0, -4, 9, 0, Math.PI * 2);
@@ -688,7 +844,7 @@
                 ctx.arc(3 + pupilOffset, -5, 1.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Beak (deep crimson)
+                // Beak
                 ctx.fillStyle = '#8B0000';
                 ctx.beginPath();
                 ctx.moveTo(-2.5, -1);
@@ -718,6 +874,9 @@
                 if (!this.isJumping) {
                     ctx.fillRect(-5, 28, 3, 5);
                     ctx.fillRect(2, 28, 3, 5);
+                } else {
+                    ctx.fillRect(-6, 26, 4, 3);
+                    ctx.fillRect(2, 26, 4, 3);
                 }
 
                 // Power aura
@@ -728,6 +887,14 @@
                     ctx.beginPath();
                     ctx.arc(0, 0, 22, 0, Math.PI * 2);
                     ctx.stroke();
+
+                    // Extra power rings
+                    if (energyPercent > 0.8) {
+                        ctx.strokeStyle = `rgba(255, 215, 0, ${energyPercent * 0.6})`;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 28, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
                 }
 
                 ctx.restore();
@@ -752,14 +919,15 @@
                 this.radius = 13;
                 this.bobbing = Math.random() * Math.PI * 2;
                 this.rotation = 0;
-                this.collected = false;
                 this.originalY = y;
+                this.pulse = 0;
             }
 
             update(dt) {
                 this.bobbing += dt * 2.5;
                 this.rotation += dt * 3;
                 this.y = this.originalY + Math.sin(this.bobbing) * 25;
+                this.pulse += dt * 3;
             }
 
             draw(ctx) {
@@ -767,13 +935,23 @@
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation);
 
-                // Glow
+                const pulseScale = 1 + Math.sin(this.pulse) * 0.1;
+
+                // Multiple glows
                 ctx.fillStyle = this.getGlowColor();
-                ctx.globalAlpha = 0.3;
+                ctx.globalAlpha = 0.2;
                 ctx.beginPath();
-                ctx.arc(0, 0, this.radius + 6, 0, Math.PI * 2);
+                ctx.arc(0, 0, this.radius + 10, 0, Math.PI * 2);
                 ctx.fill();
+                
+                ctx.globalAlpha = 0.4;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius + 5, 0, Math.PI * 2);
+                ctx.fill();
+
                 ctx.globalAlpha = 1;
+
+                ctx.scale(pulseScale, pulseScale);
 
                 switch(this.type) {
                     case 'love':
@@ -811,6 +989,12 @@
                 ctx.bezierCurveTo(9 * scale, -6 * scale, 6 * scale, -11 * scale, 0, -5 * scale);
                 ctx.fill();
                 ctx.globalAlpha = 1;
+
+                // Heart highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(-2, -4, 2, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             drawLips(ctx) {
@@ -944,14 +1128,12 @@
                 ctx.strokeText('STAND!', 0, -15);
                 ctx.fillText('STAND!', 0, -15);
 
-                // Spirit aura
                 ctx.strokeStyle = 'rgba(224, 176, 255, 0.8)';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(0, 0, 60, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // Floating kanji
                 ctx.font = '32px Arial';
                 ctx.fillStyle = '#FFD700';
                 ctx.fillText('紫', 0, 0);
@@ -967,18 +1149,25 @@
             constructor() {
                 this.canvas = document.getElementById('gameCanvas');
                 this.ctx = this.canvas.getContext('2d');
-                this.width = 800;
-                this.height = 600;
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
                 this.canvas.width = this.width;
                 this.canvas.height = this.height;
 
                 this.audioEngine = new AudioEngine();
                 this.audioEngine.playRockMusic();
 
+                // Calculate game area (responsive)
+                this.gameWidth = Math.min(this.width, 800);
+                this.gameHeight = Math.min(this.height, 600);
+                this.offsetX = (this.width - this.gameWidth) / 2;
+                this.offsetY = (this.height - this.gameHeight) / 2;
+
                 this.penguin = new Penguin(100, 300);
                 this.collectibles = [];
                 this.particles = [];
                 this.specialEvents = [];
+                this.backgroundStars = this.generateStars();
                 this.score = 0;
                 this.affection = 0;
                 this.maxAffection = 100;
@@ -1003,6 +1192,89 @@
                 this.setupLevel();
                 this.setupInputHandlers();
                 this.spawnCollectibles();
+                this.setupMobileJoystick();
+
+                window.addEventListener('resize', () => this.handleResize());
+            }
+
+            handleResize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+                this.gameWidth = Math.min(this.width, 800);
+                this.gameHeight = Math.min(this.height, 600);
+                this.offsetX = (this.width - this.gameWidth) / 2;
+                this.offsetY = (this.height - this.gameHeight) / 2;
+            }
+
+            generateStars() {
+                const stars = [];
+                for (let i = 0; i < 40; i++) {
+                    stars.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height * 0.6,
+                        radius: Math.random() * 1.5,
+                        opacity: Math.random() * 0.5 + 0.3
+                    });
+                }
+                return stars;
+            }
+
+            setupMobileJoystick() {
+                const joystickContainer = document.getElementById('joystickContainer');
+                const joystickStick = document.getElementById('joystickStick');
+                const containerRect = joystickContainer.getBoundingClientRect();
+                const containerCenter = {
+                    x: containerRect.left + containerRect.width / 2,
+                    y: containerRect.top + containerRect.height / 2
+                };
+                const maxDistance = 40;
+
+                let isActive = false;
+
+                const handleStart = (e) => {
+                    isActive = true;
+                    this.updateJoystickPosition(e, containerCenter, joystickStick, maxDistance);
+                };
+
+                const handleMove = (e) => {
+                    if (isActive) {
+                        this.updateJoystickPosition(e, containerCenter, joystickStick, maxDistance);
+                    }
+                };
+
+                const handleEnd = () => {
+                    isActive = false;
+                    this.input.left = false;
+                    this.input.right = false;
+                    joystickStick.style.transform = 'translate(-50%, -50%)';
+                };
+
+                joystickContainer.addEventListener('touchstart', handleStart, { passive: true });
+                joystickContainer.addEventListener('touchmove', handleMove, { passive: true });
+                joystickContainer.addEventListener('touchend', handleEnd);
+                joystickContainer.addEventListener('mousedown', handleStart);
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('mouseup', handleEnd);
+            }
+
+            updateJoystickPosition(e, containerCenter, joystickStick, maxDistance) {
+                const touch = e.touches ? e.touches[0] : e;
+                const dx = touch.clientX - containerCenter.x;
+                const dy = touch.clientY - containerCenter.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx);
+
+                const limitedDistance = Math.min(distance, maxDistance);
+                const stickX = Math.cos(angle) * limitedDistance;
+                const stickY = Math.sin(angle) * limitedDistance;
+
+                joystickStick.style.transform = `translate(calc(-50% + ${stickX}px), calc(-50% + ${stickY}px))`;
+
+                const threshold = 15;
+                this.input.left = stickX < -threshold;
+                this.input.right = stickX > threshold;
             }
 
             setupLevel() {
@@ -1022,26 +1294,21 @@
                         case 'd':
                             this.input.right = true;
                             break;
-                        case 'arrowup':
-                        case 'w':
-                            this.input.up = true;
-                            break;
                         case ' ':
                             this.input.jump = true;
                             e.preventDefault();
                             break;
                         case 'e':
-                            this.input.special = true;
-                            this.triggerSpecialEvent('muda');
+                            this.triggerSpecial();
                             break;
                         case 'r':
                             location.reload();
                             break;
                         case 'j':
-                            this.triggerSpecialEvent('ora');
+                            this.triggerORA();
                             break;
                         case 's':
-                            this.triggerSpecialEvent('stand');
+                            this.triggerStand();
                             break;
                     }
                 });
@@ -1056,32 +1323,39 @@
                         case 'd':
                             this.input.right = false;
                             break;
-                        case 'arrowup':
-                        case 'w':
-                            this.input.up = false;
-                            break;
                         case ' ':
                             this.input.jump = false;
                             break;
-                        case 'e':
-                            this.input.special = false;
-                            break;
                     }
                 });
+            }
 
-                this.canvas.addEventListener('click', (e) => {
-                    const rect = this.canvas.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    this.spawnCollectibleAt(x, y);
-                });
+            triggerJump() {
+                this.input.jump = true;
+            }
+
+            triggerSpecial() {
+                if (this.penguin.specialEnergy < 80) return;
+                this.penguin.specialEnergy = 0;
+                this.audioEngine.playJojoSound();
+                this.triggerSpecialEvent('muda');
+            }
+
+            triggerORA() {
+                this.audioEngine.playSpecialSound();
+                this.triggerSpecialEvent('ora');
+            }
+
+            triggerStand() {
+                this.audioEngine.playSpecialSound();
+                this.triggerSpecialEvent('stand');
             }
 
             spawnCollectibles() {
                 const types = ['love', 'kiss', 'tongue'];
                 for (let i = 0; i < 10; i++) {
-                    const x = Math.random() * (this.width - 80) + 40;
-                    const y = Math.random() * (this.height - 200) + 50;
+                    const x = Math.random() * (this.gameWidth - 80) + 40;
+                    const y = Math.random() * (this.gameHeight - 200) + 50;
                     const type = types[Math.floor(Math.random() * types.length)];
                     this.collectibles.push(new Collectible(x, y, type));
                 }
@@ -1094,35 +1368,24 @@
             }
 
             triggerSpecialEvent(type) {
-                if (type === 'muda' && this.penguin.specialEnergy < 80) {
-                    return;
-                }
-
-                if (type === 'muda') {
-                    this.penguin.specialEnergy = 0;
-                    this.audioEngine.playJojoSound();
-                } else {
-                    this.audioEngine.playSpecialSound();
-                }
-
                 const affirmations = {
                     ora: [
                         "ORA ORA ORA! 💪🐧",
-                        "Your strength is amazing, sunshine! 🔥",
+                        "Your strength is amazing! 🔥",
                         "So powerful! 😈💖",
                         "I'm yours, sweetheart! 💋",
-                        "Unstoppable force! ⚡"
+                        "Unstoppable! ⚡"
                     ],
                     muda: [
                         "MUDAMUDA! You're the best! 😛💕",
-                        "I love watching you, sunshine! 👀💖",
+                        "I love watching you! 👀💖",
                         "Relentless passion! 🔥😋",
                         "Take me, my love! 💋💋",
                         "MUDA! So hot! 😈🔥"
                     ],
                     stand: [
                         "Your Stand is glorious! 💜✨",
-                        "I feel your power, sunshine! 😈💖",
+                        "I feel your power! 😈💖",
                         "Mystical beauty! 🌙💋",
                         "Your spirit enchants me! 🖤💜",
                         "So seductive! 😛💕"
@@ -1139,13 +1402,16 @@
 
             createExplosion(x, y, count) {
                 const colors = ['#FF1493', '#FF69B4', '#E0B0FF', '#FFD700', '#00FF88'];
+                const types = ['normal', 'heart', 'star'];
+                
                 for (let i = 0; i < count; i++) {
                     const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5);
                     const speed = 180 + Math.random() * 150;
                     const vx = Math.cos(angle) * speed;
                     const vy = Math.sin(angle) * speed;
                     const color = colors[Math.floor(Math.random() * colors.length)];
-                    this.particles.push(new Particle(x, y, vx, vy, color, 1.8));
+                    const particleType = types[Math.floor(Math.random() * types.length)];
+                    this.particles.push(new Particle(x, y, vx, vy, color, 1.8, particleType));
                 }
             }
 
@@ -1164,13 +1430,13 @@
                 document.getElementById('affectionFill').style.width = fillPercent + '%';
                 
                 const affectionMessages = [
-                    "Just beginning, sunshine... 😈",
-                    "You're catching my attention... 💋",
-                    "I'm falling for you, darling... 😛",
-                    "You're intoxicating me... 💖",
-                    "I'm obsessed with you! 🔥😈",
-                    "You own my heart, sunshine! 💕😍",
-                    "MINE. ALL MINE! 🖤💜"
+                    "Waiting, sunshine... 😈",
+                    "You're catching me... 💋",
+                    "I'm falling... 😛",
+                    "You're intoxicating! 💖",
+                    "I'm obsessed! 🔥😈",
+                    "You own me! 💕😍",
+                    "FOREVER YOURS! 🖤💜"
                 ];
 
                 const messageIndex = Math.floor((this.affection / this.maxAffection) * (affectionMessages.length - 1));
@@ -1196,16 +1462,16 @@
                         this.createExplosion(collectible.x, collectible.y, 18);
 
                         const affirmations = [
-                            "You're so hot, sunshine! 😛🔥",
-                            "I love you so much! 💕💖",
-                            "Absolutely divine! ✨😈",
-                            "You make me weak, darling! 😍💋",
+                            "You're so hot! 😛🔥",
+                            "I love you! 💕💖",
+                            "Divine! ✨😈",
+                            "You make me weak! 😍💋",
                             "Mine forever! 🖤😘",
-                            "So perfect! 🌹💜",
+                            "Perfect! 🌹💜",
                             "Taste the love! 😛💕",
-                            "You're incredible! 🔥👑",
-                            "Absolutely stunning! 💎✨",
-                            "My beautiful sunshine! 🌟💖"
+                            "Incredible! 🔥👑",
+                            "Stunning! 💎✨",
+                            "Beautiful, sunshine! 🌟💖"
                         ];
                         const msg = affirmations[Math.floor(Math.random() * affirmations.length)];
                         this.showAffirmation(msg, collectible.x, collectible.y - 30);
@@ -1231,13 +1497,11 @@
                 const endAffirmation = document.getElementById('endAffirmation');
 
                 const affirmations = [
-                    "You conquered my heart completely, sunshine! 💕😍",
-                    "I'm eternally yours, my love! 🖤💜",
-                    "You're the most seductive penguin ever! 😛🔥",
+                    "You conquered my heart, sunshine! 💕😍",
+                    "I'm eternally yours! 🖤💜",
+                    "You're the most seductive! 😛🔥",
                     "Forever yours, sweetheart! 💋💖",
-                    "My immortal beloved! 🌹💕",
-                    "You've made me yours, sunshine! 😈💖",
-                    "No one else will ever compare! 👑💕"
+                    "My immortal beloved! 🌹💕"
                 ];
 
                 const randomAffirmation = affirmations[Math.floor(Math.random() * affirmations.length)];
@@ -1251,7 +1515,7 @@
             update(dt) {
                 if (this.gameOver) return;
 
-                this.penguin.update(dt, this.input, []);
+                this.penguin.update(dt, this.input);
 
                 for (let collectible of this.collectibles) {
                     collectible.update(dt);
@@ -1279,94 +1543,7 @@
                 }
             }
 
-            draw() {
+            drawBackground() {
                 // Dark gothic background
                 const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-                gradient.addColorStop(0, '#0a0520');
-                gradient.addColorStop(0.5, '#1a0a3a');
-                gradient.addColorStop(1, '#0a0520');
-                this.ctx.fillStyle = gradient;
-                this.ctx.fillRect(0, 0, this.width, this.height);
-
-                // Floating dark mist
-                this.ctx.fillStyle = 'rgba(128, 0, 128, 0.1)';
-                for (let i = 0; i < 15; i++) {
-                    const x = (Date.now() * 0.03 + i * 50) % this.width;
-                    const y = (Date.now() * 0.01 + i * 40) % (this.height * 0.5);
-                    this.ctx.beginPath();
-                    this.ctx.arc(x, y + 50, 30 + Math.sin(Date.now() * 0.001 + i) * 10, 0, Math.PI * 2);
-                    this.ctx.fill();
-                }
-
-                // Ground - dark stone
-                this.ctx.fillStyle = '#0f0520';
-                this.ctx.fillRect(0, 400, this.width, 200);
-
-                // Stone tiles
-                this.ctx.strokeStyle = 'rgba(128, 0, 128, 0.3)';
-                this.ctx.lineWidth = 1;
-                for (let i = 0; i < 10; i++) {
-                    for (let j = 0; j < 3; j++) {
-                        this.ctx.strokeRect(i * 80, 400 + j * 66, 80, 66);
-                    }
-                }
-
-                // Moon glow behind
-                this.ctx.fillStyle = 'rgba(224, 176, 255, 0.08)';
-                this.ctx.beginPath();
-                this.ctx.arc(this.width * 0.8, 80, 100, 0, Math.PI * 2);
-                this.ctx.fill();
-
-                // Draw collectibles
-                for (let collectible of this.collectibles) {
-                    collectible.draw(this.ctx);
-                }
-
-                // Draw penguin
-                this.penguin.draw(this.ctx);
-
-                // Draw particles
-                for (let particle of this.particles) {
-                    particle.draw(this.ctx);
-                }
-
-                // Draw special events
-                for (let event of this.specialEvents) {
-                    event.draw(this.ctx);
-                }
-
-                // Update UI
-                document.getElementById('score').textContent = this.score;
-                document.getElementById('lives').textContent = this.lives;
-                document.getElementById('level').textContent = this.level;
-                document.getElementById('power').textContent = Math.floor((this.penguin.specialEnergy / this.penguin.maxSpecialEnergy) * 100);
-                document.getElementById('fps').textContent = this.fps;
-            }
-
-            run() {
-                const gameLoop = () => {
-                    const now = Date.now();
-                    const dt = Math.min((now - this.lastFrameTime) / 1000, 0.016);
-                    this.lastFrameTime = now;
-
-                    this.frameCount++;
-                    if (this.frameCount % 30 === 0) {
-                        this.fps = Math.round(1 / dt);
-                    }
-
-                    this.update(dt);
-                    this.draw();
-
-                    requestAnimationFrame(gameLoop);
-                };
-
-                gameLoop();
-            }
-        }
-
-        // ============ START GAME ============
-        const game = new Game();
-        game.run();
-    </script>
-</body>
-</html>
+                gradient.addColor
